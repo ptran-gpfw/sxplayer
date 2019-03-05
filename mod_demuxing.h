@@ -27,6 +27,8 @@
 
 #include "opts.h"
 
+struct postdemux_ctx;
+
 struct demuxing_ctx *sxpi_demuxing_alloc(void);
 
 int sxpi_demuxing_init(void *log_ctx,
