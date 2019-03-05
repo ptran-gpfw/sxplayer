@@ -81,7 +81,7 @@ static const AVOption sxplayer_options[] = {
     { "audio_texture",          NULL, OFFSET(audio_texture),          AV_OPT_TYPE_INT,       {.i64=1},       0, 1 },
     { "vt_pix_fmt",             NULL, OFFSET(vt_pix_fmt),             AV_OPT_TYPE_STRING,    {.str="bgra"},  0, 0 },
     { "stream_idx",             NULL, OFFSET(stream_idx),             AV_OPT_TYPE_INT,       {.i64=-1},     -1, INT_MAX },
-    { "live",                   NULL, OFFSET(live),                   AV_OPT_TYPE_INT,       {.i64=1},       0, 1 },
+    { "live",                   NULL, OFFSET(live),                   AV_OPT_TYPE_INT,       {.i64=0},       0, 1 },
     { NULL }
 };
 

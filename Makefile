@@ -8,6 +8,7 @@ PROJECT_OBJS = async.o          \
                mod_demuxing.o   \
                mod_filtering.o  \
                msg.o            \
+               postdemux.o      \
                utils.o          \
 
 DARWIN_OBJS  = decoder_vt.o avc.o

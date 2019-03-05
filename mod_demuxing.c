@@ -24,6 +24,7 @@
 #include <libavutil/eval.h>
 
 #include "mod_demuxing.h"
+#include "postdemux.h"
 #include "internal.h"
 #include "log.h"
 #include "msg.h"
@@ -36,6 +37,7 @@ struct demuxing_ctx {
     AVStream *stream;
     int stream_idx;
     int is_image;
+    struct postdemux_ctx *postdemuxer;
     AVThreadMessageQueue *src_queue;
     AVThreadMessageQueue *pkt_queue;
 };
@@ -146,6 +148,10 @@ int sxpi_demuxing_init(void *log_ctx,
     LOG(ctx, INFO, "Selected %s stream %d",
         av_get_media_type_string(media_type), ctx->stream_idx);
 
+    if (opts->live > 0) {
+        ctx->postdemuxer = sxpi_postdemux_alloc(log_ctx, ctx->stream);
+    }
+
     /* Automatically discard all the other streams so we don't have to filter
      * them out most of the time */
     for (int i = 0; i < ctx->fmt_ctx->nb_streams; i++)
@@ -243,6 +249,10 @@ void sxpi_demuxing_run(struct demuxing_ctx *ctx)
         if (!msg.data) {
             av_packet_unref(&pkt);
             break;
+        }
+
+        if (ctx->postdemuxer != NULL) {
+            ctx->postdemuxer->update_packet(ctx->postdemuxer, msg.data);
         }
 
         ret = av_thread_message_queue_send(ctx->pkt_queue, &msg, 0);
