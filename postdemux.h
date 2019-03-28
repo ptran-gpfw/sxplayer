@@ -25,11 +25,16 @@
 
 struct postdemux_ctx {
     void *log_ctx;
-    AVStream *avstream;
     void (*update_packet)(struct postdemux_ctx *, AVPacket *);
     int64_t offset;
+    int64_t count;
+    int32_t time_base_num;
+    int32_t time_base_den;
+    int32_t framerate_frames;
+    int32_t framerate_secs;
+    int32_t frame_period;
 };
 
-struct postdemux_ctx *sxpi_postdemux_alloc(void *log_ctx, AVStream *avstream);
+struct postdemux_ctx *sxpi_postdemux_alloc(void *log_ctx, int32_t time_base_num, int32_t time_base_den, int32_t framerate_frames, int32_t framerate_secs);
 
 #endif

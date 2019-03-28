@@ -58,6 +58,8 @@ struct sxplayer_ctx {
 
     int64_t entering_time;
     const char *cur_func_name;
+
+    int64_t last_live_frame_time;
 };
 
 #define OFFSET(x) offsetof(struct sxplayer_ctx, opts.x)
@@ -228,6 +230,7 @@ struct sxplayer_ctx *sxplayer_create(const char *filename)
     s->first_ts             = AV_NOPTS_VALUE;
     s->last_frame_poped_ts  = AV_NOPTS_VALUE;
     s->last_pushed_frame_ts = AV_NOPTS_VALUE;
+    s->last_live_frame_time = AV_NOPTS_VALUE;
 
     av_assert0(!s->context_configured);
     return s;
@@ -757,7 +760,22 @@ struct sxplayer_frame *sxplayer_get_next_frame(struct sxplayer_ctx *s)
     if (ret < 0)
         return ret_frame(s, NULL);
 
+    int64_t curr_time;
+    if (s->opts.live) {
+        int64_t last_time = s->last_live_frame_time;
+        curr_time = av_gettime_relative();
+        if (last_time != AV_NOPTS_VALUE
+                && (curr_time - last_time) < 30000) {
+            LOG(s, ERROR, "ct/lt/diff,%lld,%lld,%lld", (long long)curr_time, (long long)last_time, (long long)curr_time-last_time);
+            return ret_frame(s, NULL);
+        }
+    }
+
     AVFrame *frame = pop_frame(s);
+
+    if (s->opts.live && frame != NULL)
+        s->last_live_frame_time = curr_time;
+
     return ret_frame(s, frame);
 }
 

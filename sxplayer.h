@@ -259,6 +259,8 @@ int sxplayer_seek(struct sxplayer_ctx *s, double t);
  */
 struct sxplayer_frame *sxplayer_get_next_frame(struct sxplayer_ctx *s);
 
+struct sxplayer_frame *sxplayer_get_next_frame_with_play_time(struct sxplayer_ctx *s, double play_time);
+
 /* Enable or disable the droping of non reference frames */
 int sxplayer_set_drop_ref(struct sxplayer_ctx *s, int drop);
 

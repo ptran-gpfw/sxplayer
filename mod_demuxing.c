@@ -149,7 +149,9 @@ int sxpi_demuxing_init(void *log_ctx,
         av_get_media_type_string(media_type), ctx->stream_idx);
 
     if (opts->live > 0) {
-        ctx->postdemuxer = sxpi_postdemux_alloc(log_ctx, ctx->stream);
+        int32_t framerate_frames = 90000;
+        int32_t framerate_secs = 3003;
+        ctx->postdemuxer = sxpi_postdemux_alloc(log_ctx, ctx->stream->time_base.num, ctx->stream->time_base.den, framerate_frames, framerate_secs);
     }
 
     /* Automatically discard all the other streams so we don't have to filter
